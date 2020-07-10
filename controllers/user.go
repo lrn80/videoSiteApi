@@ -77,7 +77,8 @@ func (c *UserController) LoginDo() {
 		c.ServeJSON()
 	}
 
-	isorno, _ := regexp.MatchString(`^1(3|5|7|8|4)[0-9]{8}$`, mobile)
+	isorno, _ := regexp.MatchString(`^1(3|5|7|8|4)[0-9]{4,9}$`, mobile)
+
 	if !isorno {
 		c.Data["json"] = ReturnError(4003, "手机号码的格式不正确")
 		c.ServeJSON()
