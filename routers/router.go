@@ -24,6 +24,11 @@ func init() {
 				&controllers.VideoController{},
 			),
 		),
+		beego.NSNamespace("/base",
+			beego.NSInclude(
+				&controllers.BaseController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
