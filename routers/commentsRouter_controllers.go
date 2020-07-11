@@ -34,4 +34,13 @@ func init() {
             Filters: nil,
             Params: nil})
 
+    beego.GlobalControllerRouter["fyoukuapi/controllers:VideoController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:VideoController"],
+        beego.ControllerComments{
+            Method: "ChannelHot",
+            Router: "/channel/hot",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
 }

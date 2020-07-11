@@ -29,3 +29,24 @@ func (c *VideoController) ChannelAdvert() {
 		c.ServeJSON()
 	}
 }
+
+// 正在热播功能
+// @router /channel/hot [get]
+func (c *VideoController) ChannelHot() {
+	channelId, _ := c.GetInt("channelId")
+
+	if channelId == 0 {
+		c.Data["json"] =  ReturnError(4001, "未指定频道")
+		c.ServeJSON()
+	}
+
+	num, videos, err := models.GetChannelHotList(channelId)
+
+	if err == nil {
+		c.Data["json"] = ReturnSuccess(0, "success", videos, num)
+		c.ServeJSON()
+	} else {
+		c.Data["json"] = ReturnError(4004, "并未找到相应的热播功能，请稍后再试！")
+		c.ServeJSON()
+	}
+}
