@@ -33,7 +33,7 @@ type VideoData struct {
 }
 
 func init()  {
-	orm.RegisterModel(new(VideoData))
+	orm.RegisterModel(new(Video))
 }
 
 func GetChannelHotList(channelId int) (int64, []VideoData, error)  {
