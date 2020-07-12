@@ -9,6 +9,15 @@ func init() {
 
     beego.GlobalControllerRouter["fyoukuapi/controllers:BarrageController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:BarrageController"],
         beego.ControllerComments{
+            Method: "Save",
+            Router: "/barrage/save",
+            AllowHTTPMethods: []string{"*"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["fyoukuapi/controllers:BarrageController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:BarrageController"],
+        beego.ControllerComments{
             Method: "BarrageWs",
             Router: "/barrage/ws",
             AllowHTTPMethods: []string{"*"},

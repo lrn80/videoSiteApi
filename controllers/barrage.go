@@ -65,3 +65,43 @@ func (c *BarrageController) BarrageWs() {
 ERR:
 conn.Close()
 }
+
+//保存弹幕
+// @router /barrage/save [*]
+func (this *BarrageController) Save() {
+	uid, _ := this.GetInt("uid")
+	content := this.GetString("content")
+	currentTime, _ := this.GetInt("currentTime")
+	episodesId, _ := this.GetInt("episodesId")
+	videoId, _ := this.GetInt("videoId")
+
+	if content == "" {
+		this.Data["json"] = ReturnError(4001, "弹幕不能为空")
+		this.ServeJSON()
+	}
+	if uid == 0 {
+		this.Data["json"] = ReturnError(4002, "请先登录")
+		this.ServeJSON()
+	}
+	if episodesId == 0 {
+		this.Data["json"] = ReturnError(4003, "必须指定剧集ID")
+		this.ServeJSON()
+	}
+	if videoId == 0 {
+		this.Data["json"] = ReturnError(4005, "必须指定视频ID")
+		this.ServeJSON()
+	}
+
+	if currentTime == 0 {
+		this.Data["json"] = ReturnError(4006, "必须指定视频播放时间")
+		this.ServeJSON()
+	}
+	err := models.SaveBarrage(episodesId, videoId, currentTime, uid, content)
+	if err == nil {
+		this.Data["json"] = ReturnSuccess(0, "success", "", 1)
+		this.ServeJSON()
+	} else {
+		this.Data["json"] = ReturnError(5000, err)
+		this.ServeJSON()
+	}
+}
