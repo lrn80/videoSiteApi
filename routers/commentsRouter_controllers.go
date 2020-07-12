@@ -52,6 +52,15 @@ func init() {
             Filters: nil,
             Params: nil})
 
+    beego.GlobalControllerRouter["fyoukuapi/controllers:TopController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:TopController"],
+        beego.ControllerComments{
+            Method: "TypeTop",
+            Router: "/type/top",
+            AllowHTTPMethods: []string{"*"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
     beego.GlobalControllerRouter["fyoukuapi/controllers:UserController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:UserController"],
         beego.ControllerComments{
             Method: "LoginDo",

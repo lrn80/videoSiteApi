@@ -128,3 +128,11 @@ func GetChannelTop(channelId int) (int64, []VideoData, error) {
 	num, err := o.Raw("SELECT id,title,sub_title,img,img1,add_time,episodes_count,is_end FROM video WHERE status=1 AND channel_id=? ORDER BY comment DESC LIMIT 10", channelId).QueryRows(&videos)
 	return num, videos, err
 }
+
+//类型排行榜
+func GetTypeTop(typeId int) (int64, []VideoData, error) {
+	o := orm.NewOrm()
+	var videos []VideoData
+	num, err := o.Raw("SELECT id,title,sub_title,img,img1,add_time,episodes_count,is_end FROM video WHERE status=1 AND type_id=? ORDER BY comment DESC LIMIT 10", typeId).QueryRows(&videos)
+	return num, videos, err
+}
