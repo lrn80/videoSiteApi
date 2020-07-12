@@ -136,3 +136,39 @@ func (this *VideoController) ChannelVideo() {
 		this.ServeJSON()
 	}
 }
+
+//获取视频详情
+// @router /video/info [get]
+func (this *VideoController) VideoInfo() {
+	videoId, _ := this.GetInt("videoId")
+	if videoId == 0 {
+		this.Data["json"] = ReturnError(4001, "必须指定视频ID")
+		this.ServeJSON()
+	}
+	video, err := models.GetVideoInfo(videoId)
+	if err == nil {
+		this.Data["json"] = ReturnSuccess(0, "success", video, 1)
+		this.ServeJSON()
+	} else {
+		this.Data["json"] = ReturnError(4004, "请求数据失败，请稍后重试~")
+		this.ServeJSON()
+	}
+}
+
+//获取视频剧集列表
+// @router /video/episodes/list [get]
+func (this *VideoController) VideoEpisodesList() {
+	videoId, _ := this.GetInt("videoId")
+	if videoId == 0 {
+		this.Data["json"] = ReturnError(4001, "必须指定视频ID")
+		this.ServeJSON()
+	}
+	num, episodes, err := models.GetVideoEpisodesList(videoId)
+	if err == nil {
+		this.Data["json"] = ReturnSuccess(0, "success", episodes, num)
+		this.ServeJSON()
+	} else {
+		this.Data["json"] = ReturnError(4004, "请求数据失败，请稍后重试~")
+		this.ServeJSON()
+	}
+}
