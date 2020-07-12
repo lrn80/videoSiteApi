@@ -10,7 +10,7 @@ type TopController struct {
 }
 
 //根据频道获取排行榜
-// @router /channel/top [*]
+// @router /channel/top [get]
 func (c *TopController) ChannelTop() {
 	//获取频道ID
 	channelId, _ := c.GetInt("channelId")
@@ -29,7 +29,7 @@ func (c *TopController) ChannelTop() {
 }
 
 //根据类型获取排行榜
-// @router /type/top [*]
+// @router /type/top [get]
 func (c *TopController) TypeTop() {
 	typeId, _ := c.GetInt("typeId")
 	if typeId == 0 {

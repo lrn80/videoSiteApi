@@ -34,7 +34,8 @@ func MD5V(password string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
+//格式化时间
 func DateFormat(times int64) string {
 	videoTime := time.Unix(times, 0)
-	return videoTime.Format("2020-06-01")
+	return videoTime.Format("2006-01-02")
 }

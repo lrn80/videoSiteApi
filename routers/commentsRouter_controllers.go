@@ -7,6 +7,15 @@ import (
 
 func init() {
 
+    beego.GlobalControllerRouter["fyoukuapi/controllers:BarrageController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:BarrageController"],
+        beego.ControllerComments{
+            Method: "BarrageWs",
+            Router: "/barrage/ws",
+            AllowHTTPMethods: []string{"*"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
     beego.GlobalControllerRouter["fyoukuapi/controllers:BaseController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:BaseController"],
         beego.ControllerComments{
             Method: "ChannelRegion",
@@ -47,7 +56,7 @@ func init() {
         beego.ControllerComments{
             Method: "ChannelTop",
             Router: "/channel/top",
-            AllowHTTPMethods: []string{"*"},
+            AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
@@ -56,7 +65,7 @@ func init() {
         beego.ControllerComments{
             Method: "TypeTop",
             Router: "/type/top",
-            AllowHTTPMethods: []string{"*"},
+            AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
@@ -75,6 +84,15 @@ func init() {
             Method: "SaveRegister",
             Router: "/register/save",
             AllowHTTPMethods: []string{"post"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["fyoukuapi/controllers:UserController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:UserController"],
+        beego.ControllerComments{
+            Method: "SendMessageDo",
+            Router: "/send/message",
+            AllowHTTPMethods: []string{"*"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})

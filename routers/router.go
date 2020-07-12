@@ -34,6 +34,16 @@ func init() {
 				&controllers.CommentController{},
 			),
 		),
+		beego.NSNamespace("/top",
+			beego.NSInclude(
+				&controllers.TopController{},
+			),
+		),
+		beego.NSNamespace("/barrage",
+			beego.NSInclude(
+				&controllers.BarrageController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
