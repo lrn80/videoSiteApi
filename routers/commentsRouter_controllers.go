@@ -7,6 +7,33 @@ import (
 
 func init() {
 
+    beego.GlobalControllerRouter["fyoukuapi/controllers:AliyunController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:AliyunController"],
+        beego.ControllerComments{
+            Method: "CreateUploadVideo",
+            Router: "/aliyun/create/upload/video",
+            AllowHTTPMethods: []string{"*"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["fyoukuapi/controllers:AliyunController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:AliyunController"],
+        beego.ControllerComments{
+            Method: "RefreshUploadVideo",
+            Router: "/aliyun/refresh/upload/video",
+            AllowHTTPMethods: []string{"*"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["fyoukuapi/controllers:AliyunController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:AliyunController"],
+        beego.ControllerComments{
+            Method: "GetPlayAuth",
+            Router: "/aliyun/video/play/auth",
+            AllowHTTPMethods: []string{"*"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
     beego.GlobalControllerRouter["fyoukuapi/controllers:BarrageController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:BarrageController"],
         beego.ControllerComments{
             Method: "Save",
@@ -153,6 +180,15 @@ func init() {
 
     beego.GlobalControllerRouter["fyoukuapi/controllers:VideoController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:VideoController"],
         beego.ControllerComments{
+            Method: "UserVideo",
+            Router: "/user/video",
+            AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["fyoukuapi/controllers:VideoController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:VideoController"],
+        beego.ControllerComments{
             Method: "VideoEpisodesList",
             Router: "/video/episodes/list",
             AllowHTTPMethods: []string{"get"},
@@ -165,6 +201,15 @@ func init() {
             Method: "VideoInfo",
             Router: "/video/info",
             AllowHTTPMethods: []string{"get"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["fyoukuapi/controllers:VideoController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:VideoController"],
+        beego.ControllerComments{
+            Method: "VideoSave",
+            Router: "/video/save",
+            AllowHTTPMethods: []string{"post"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
