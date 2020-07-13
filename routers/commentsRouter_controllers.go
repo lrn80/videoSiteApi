@@ -27,6 +27,15 @@ func init() {
 
     beego.GlobalControllerRouter["fyoukuapi/controllers:AliyunController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:AliyunController"],
         beego.ControllerComments{
+            Method: "VideoCallback",
+            Router: "/aliyun/video/callback",
+            AllowHTTPMethods: []string{"*"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["fyoukuapi/controllers:AliyunController"] = append(beego.GlobalControllerRouter["fyoukuapi/controllers:AliyunController"],
+        beego.ControllerComments{
             Method: "GetPlayAuth",
             Router: "/aliyun/video/play/auth",
             AllowHTTPMethods: []string{"*"},

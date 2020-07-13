@@ -44,6 +44,11 @@ func init() {
 				&controllers.BarrageController{},
 			),
 		),
+		beego.NSNamespace("/aliyun",
+			beego.NSInclude(
+				&controllers.AliyunController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

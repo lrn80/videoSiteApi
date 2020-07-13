@@ -3,7 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"fyoukuApi-master/fyoukuapi/models"
+	"fyoukuapi/models"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/auth/credentials"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/vod"
@@ -159,6 +159,7 @@ type CallbackData struct {
 	Exteng      string
 	StreamInfos []CallbackStreamInfosData
 }
+
 type CallbackStreamInfosData struct {
 	Status     string
 	Bitrate    int
@@ -176,11 +177,11 @@ type CallbackStreamInfosData struct {
 
 //回调函数
 // @router /aliyun/video/callback [*]
-func (this *AliyunController) VideoCallback() {
+func (c *AliyunController) VideoCallback() {
 	var ob CallbackData
-	r := this.Ctx.Input.RequestBody
+	r := c.Ctx.Input.RequestBody
 	json.Unmarshal(r, &ob)
 
 	models.SaveAliyunVideo(ob.VideoId, string(r))
-	this.Ctx.WriteString("success")
+	c.Ctx.WriteString("success")
 }

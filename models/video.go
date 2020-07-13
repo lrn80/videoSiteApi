@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/astaxie/beego/orm"
 	"time"
 )
@@ -177,3 +178,11 @@ func SaveVideo(title string, subTitle string, channelId int, regionId int, typeI
 	}
 	return err
 }
+
+func SaveAliyunVideo(videoId string, log string) error {
+	o := orm.NewOrm()
+	_, err := o.Raw("INSERT INTO aliyun_video (video_id, log, add_time) VALUES (?,?,?)", videoId, log, time.Now().Unix()).Exec()
+	fmt.Println(err)
+	return err
+}
+
