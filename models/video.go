@@ -260,6 +260,55 @@ func GetTypeTop(typeId int) (int64, []VideoData, error) {
 	return num, videos, err
 }
 
+//增加redis缓存 - 类型排行榜
+func RedisGetTypeTop(typeId int) (int64, []VideoData, error) {
+	var (
+		videos []VideoData
+		num    int64
+	)
+	conn := redisClient.PoolConnect()
+	defer conn.Close()
+
+	redisKey := "video:top:type:typeId:" + strconv.Itoa(typeId)
+	exists, err := redis.Bool(conn.Do("exists", redisKey))
+	if exists {
+		num = 0
+		res, _ := redis.Values(conn.Do("zrevrange", redisKey, "0", "10", "WITHSCORES"))
+		for k, v := range res {
+			if k%2 == 0 {
+				videoId, err := strconv.Atoi(string(v.([]byte)))
+				videoInfo, err := RedisGetVideoInfo(videoId)
+				if err == nil {
+					var videoDataInfo VideoData
+					videoDataInfo.Id = videoInfo.Id
+					videoDataInfo.Img = videoInfo.Img
+					videoDataInfo.Img1 = videoInfo.Img1
+					videoDataInfo.IsEnd = videoInfo.IsEnd
+					videoDataInfo.SubTitle = videoInfo.SubTitle
+					videoDataInfo.Title = videoInfo.Title
+					videoDataInfo.AddTime = videoInfo.AddTime
+					videoDataInfo.Comment = videoInfo.Comment
+					videoDataInfo.EpisodesCount = videoInfo.EpisodesCount
+					videos = append(videos, videoDataInfo)
+					num++
+				}
+			}
+		}
+	} else {
+		o := orm.NewOrm()
+		num, err = o.Raw("SELECT id,title,sub_title,img,img1,add_time,episodes_count,is_end FROM video WHERE status=1 AND type_id=? ORDER BY comment DESC LIMIT 10", typeId).QueryRows(&videos)
+		if err == nil {
+			//保存redis
+			for _, v := range videos {
+				conn.Do("zadd", redisKey, v.Comment, v.Id)
+			}
+			conn.Do("expire", redisKey, 86400*30)
+		}
+
+	}
+	return num, videos, err
+}
+
 func GetUserVideo(uid int) (int64, []VideoData, error) {
 	o := orm.NewOrm()
 	var videos []VideoData
