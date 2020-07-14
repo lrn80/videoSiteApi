@@ -38,6 +38,7 @@ type VideoData struct {
 	Img1          string
 	EpisodesCount int
 	IsEnd         int
+	Comment       int
 }
 
 type Episodes struct {
@@ -159,7 +160,7 @@ func RedisGetEpisodesList(videoId int) (int64, []Episodes, error) {
 		num      int64
 		err      error
 	)
-	conn := redisClient.Connect()
+	conn := redisClient.PoolConnect()
 	defer conn.Close()
 	redisKey := "video:episodes:videoId" + strconv.Itoa(videoId)
 
@@ -200,6 +201,54 @@ func GetChannelTop(channelId int) (int64, []VideoData, error) {
 	o := orm.NewOrm()
 	var videos []VideoData
 	num, err := o.Raw("SELECT id,title,sub_title,img,img1,add_time,episodes_count,is_end FROM video WHERE status=1 AND channel_id=? ORDER BY comment DESC LIMIT 10", channelId).QueryRows(&videos)
+	return num, videos, err
+}
+
+// 增加redis缓存频道排行榜
+func RedisGetChannelTop(channelId int) (int64, []VideoData, error)  {
+	 var (
+	 	videos []VideoData
+	 	num int64
+	 )
+	 conn := redisClient.PoolConnect()
+	 defer conn.Close()
+	 //定义RedisKey
+	 redisKey := "video:top:channel:channelId:" + strconv.Itoa(channelId)
+	 exists, err := redis.Bool(conn.Do("exists", redisKey))
+
+	if exists {
+		num = 0
+		res, _ := redis.Values(conn.Do("zrevrange", redisKey, "0", "10"))
+		for _, v := range res {
+			fmt.Println(string(v.([]byte)))
+				videoId, err := strconv.Atoi(string(v.([]byte)))
+				videoInfo, err := RedisGetVideoInfo(videoId)
+				if err == nil {
+					var videoDataInfo VideoData
+					videoDataInfo.Id = videoInfo.Id
+					videoDataInfo.Img = videoInfo.Img
+					videoDataInfo.Img1 = videoInfo.Img1
+					videoDataInfo.IsEnd = videoInfo.IsEnd
+					videoDataInfo.SubTitle = videoInfo.SubTitle
+					videoDataInfo.Title = videoInfo.Title
+					videoDataInfo.AddTime = videoInfo.AddTime
+					videoDataInfo.Comment = videoInfo.Comment
+					videoDataInfo.EpisodesCount = videoInfo.EpisodesCount
+					videos = append(videos, videoDataInfo)
+					num++
+			}
+		}
+	} else {
+		o := orm.NewOrm()
+		var videos []VideoData
+		num, err = o.Raw("SELECT id,title,sub_title,img,img1,add_time,episodes_count,is_end FROM video WHERE status=1 AND channel_id=? ORDER BY comment DESC LIMIT 10", channelId).QueryRows(&videos)
+		if err == nil {
+			for _, v := range videos {
+				conn.Do("zadd", redisKey, v.Comment, v.Id)
+			}
+		}
+	}
+
 	return num, videos, err
 }
 
