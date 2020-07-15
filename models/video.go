@@ -240,12 +240,13 @@ func RedisGetChannelTop(channelId int) (int64, []VideoData, error)  {
 		}
 	} else {
 		o := orm.NewOrm()
-		var videos []VideoData
-		num, err = o.Raw("SELECT id,title,sub_title,img,img1,add_time,episodes_count,is_end FROM video WHERE status=1 AND channel_id=? ORDER BY comment DESC LIMIT 10", channelId).QueryRows(&videos)
+		num, err = o.Raw("SELECT id,title,sub_title,img,img1,add_time,episodes_count,is_end " +
+			"FROM video WHERE status=1 AND channel_id=? ORDER BY comment DESC LIMIT 10", channelId).QueryRows(&videos)
 		if err == nil {
 			for _, v := range videos {
 				conn.Do("zadd", redisKey, v.Comment, v.Id)
 			}
+			conn.Do("expire", redisKey, 86400)
 		}
 	}
 
@@ -296,7 +297,8 @@ func RedisGetTypeTop(typeId int) (int64, []VideoData, error) {
 		}
 	} else {
 		o := orm.NewOrm()
-		num, err = o.Raw("SELECT id,title,sub_title,img,img1,add_time,episodes_count,is_end FROM video WHERE status=1 AND type_id=? ORDER BY comment DESC LIMIT 10", typeId).QueryRows(&videos)
+		num, err = o.Raw("SELECT id,title,sub_title,img,img1,add_time,episodes_count,is_end " +
+			"FROM video WHERE status=1 AND type_id=? ORDER BY comment DESC LIMIT 10", typeId).QueryRows(&videos)
 		if err == nil {
 			//保存redis
 			for _, v := range videos {

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"fyoukuapi/models"
 	"github.com/astaxie/beego"
 )
@@ -37,6 +38,7 @@ func (c *TopController) TypeTop() {
 		c.ServeJSON()
 	}
 	num, videos, err := models.RedisGetChannelTop(typeId)
+	fmt.Println(videos)
 	if err == nil {
 		c.Data["json"] = ReturnSuccess(0, "success", videos, num)
 		c.ServeJSON()

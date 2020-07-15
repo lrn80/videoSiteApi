@@ -13,8 +13,8 @@ func Connect() redis.Conn {
 
 func PoolConnect() redis.Conn  {
    pool :=	&redis.Pool{
-		MaxIdle: 1,
-		MaxActive: 10,
+		MaxIdle: 10,
+		MaxActive: 100,
 		IdleTimeout: 180 * time.Second,
 		Wait: true,
 		Dial: func() (redis.Conn, error) {
