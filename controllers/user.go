@@ -127,6 +127,11 @@ func (c *UserController) LoginDo() {
 //	}
 //}
 
+type SendData struct {
+	UserId    int
+	MessageId int64
+}
+
 //批量发送通知消息
 // @router /send/message [*]
 func (c *UserController) SendMessageDo() {
@@ -144,15 +149,44 @@ func (c *UserController) SendMessageDo() {
 	messageId, err := models.SendMessageDo(content)
 	if err == nil {
 		uidConfig := strings.Split(uids, ",")
-		for _, v := range uidConfig {
-			userId, _ := strconv.Atoi(v)
-			//models.SendMessageUser(userId, messageId)
-			models.SendMessageUserMq(userId, messageId)
+		count := len(uidConfig)
+
+		sendChan := make(chan SendData, count)
+		closeChan := make(chan bool, count)
+
+		go func() {
+			var data SendData
+			for _, v := range uidConfig {
+				userId, _ := strconv.Atoi(v)
+				data.UserId = userId
+				data.MessageId = messageId
+				sendChan <- data
+			}
+			close(sendChan)
+		}()
+
+		for i := 0; i < 5; i++ {
+			go sendMessageFunc(sendChan, closeChan)
 		}
+
+		for i := 0; i < 5; i++ {
+			<-closeChan
+		}
+
+		close(closeChan)
+
 		c.Data["json"] = ReturnSuccess(0, "发送成功~", "", 1)
 		c.ServeJSON()
 	} else {
 		c.Data["json"] = ReturnError(5000, "发送失败，请联系客服~")
 		c.ServeJSON()
 	}
+}
+
+func sendMessageFunc(sendChan chan SendData, closeChan chan bool) {
+	for t := range sendChan {
+		fmt.Println(t)
+		models.SendMessageUserMq(t.UserId, t.MessageId)
+	}
+	closeChan <- true
 }
