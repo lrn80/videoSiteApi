@@ -19,47 +19,47 @@ type UserController struct {
 // @Param mobile fromData string true "用户手机号"
 // @Param password fromData string true "用户密码"
 // @router /register/save [post]
-func (this *UserController) SaveRegister()  {
+func (c *UserController) SaveRegister()  {
 	var (
 		mobile string
 		password string
 		err error
 	)
 
-	mobile = this.GetString("mobile")
-	password = this.GetString("password")
+	mobile = c.GetString("mobile")
+	password = c.GetString("password")
 
 	// 判断
 	if mobile == "" {
-		this.Data["json"] = ReturnError(4001, "手机号不能为空")
-		this.ServeJSON()
+		c.Data["json"] = ReturnError(4001, "手机号不能为空")
+		c.ServeJSON()
 	}
 
 	isorno, _ := regexp.MatchString(`^(1[3|4|5|7|8][0-9]\d{4,8})$`, mobile)
 	fmt.Println(isorno)
 	if !isorno {
-		this.Data["json"] = ReturnError(4002, "手机格式本正确")
-		this.ServeJSON()
+		c.Data["json"] = ReturnError(4002, "手机格式本正确")
+		c.ServeJSON()
 	}
 
 	if password == "" {
-		this.Data["json"] = ReturnError(4003, "密码不能为空")
-		this.ServeJSON()
+		c.Data["json"] = ReturnError(4003, "密码不能为空")
+		c.ServeJSON()
 	}
 
 	status := models.IsUserMobile(mobile)
 	fmt.Println(status)
 	if status {
-		this.Data["json"] = ReturnError(4005, "这个手机号已经注册过了")
-		this.ServeJSON()
+		c.Data["json"] = ReturnError(4005, "这个手机号已经注册过了")
+		c.ServeJSON()
 	} else {
 		err = models.UserSave(mobile, MD5V(password))
 		if err == nil {
-			this.Data["json"] = ReturnSuccess(200, "添加成功！", nil, 0)
-			this.ServeJSON()
+			c.Data["json"] = ReturnSuccess(200, "添加成功！", nil, 0)
+			c.ServeJSON()
 		} else {
-			this.Data["json"] = ReturnError(5000, err)
-			this.ServeJSON()
+			c.Data["json"] = ReturnError(5000, err)
+			c.ServeJSON()
 		}
 	}
 }
@@ -99,30 +99,60 @@ func (c *UserController) LoginDo() {
 
 //批量发送通知消息
 // @router /send/message [*]
-func (this *UserController) SendMessageDo() {
-	uids := this.GetString("uids")
-	content := this.GetString("content")
+//func (c *UserController) SendMessageDo() {
+//	uids := c.GetString("uids")
+//	content := c.GetString("content")
+//
+//	if uids == "" {
+//		c.Data["json"] = ReturnError(4001, "请填写接收人~")
+//		c.ServeJSON()
+//	}
+//	if content == "" {
+//		c.Data["json"] = ReturnError(4002, "请填写发送内容")
+//		c.ServeJSON()
+//	}
+//	messageId, err := models.SendMessageDo(content)
+//	if err == nil {
+//		uidConfig := strings.Split(uids, ",")
+//		for _, v := range uidConfig {
+//			userId, _ := strconv.Atoi(v)
+//			//models.SendMessageUser(userId, messageId)
+//			models.SendMessageUserMq(userId, messageId)
+//		}
+//		c.Data["json"] = ReturnSuccess(0, "发送成功~", "", 1)
+//		c.ServeJSON()
+//	} else {
+//		c.Data["json"] = ReturnError(5000, "发送失败，请联系客服~")
+//		c.ServeJSON()
+//	}
+//}
+
+//批量发送通知消息
+// @router /send/message [*]
+func (c *UserController) SendMessageDo() {
+	uids := c.GetString("uids")
+	content := c.GetString("content")
 
 	if uids == "" {
-		this.Data["json"] = ReturnError(4001, "请填写接收人~")
-		this.ServeJSON()
+		c.Data["json"] = ReturnError(4001, "请填写接收人~")
+		c.ServeJSON()
 	}
 	if content == "" {
-		this.Data["json"] = ReturnError(4002, "请填写发送内容")
-		this.ServeJSON()
+		c.Data["json"] = ReturnError(4002, "请填写发送内容")
+		c.ServeJSON()
 	}
 	messageId, err := models.SendMessageDo(content)
 	if err == nil {
 		uidConfig := strings.Split(uids, ",")
 		for _, v := range uidConfig {
 			userId, _ := strconv.Atoi(v)
-			models.SendMessageUser(userId, messageId)
-			//models.SendMessageUserMq(userId, messageId)
+			//models.SendMessageUser(userId, messageId)
+			models.SendMessageUserMq(userId, messageId)
 		}
-		this.Data["json"] = ReturnSuccess(0, "发送成功~", "", 1)
-		this.ServeJSON()
+		c.Data["json"] = ReturnSuccess(0, "发送成功~", "", 1)
+		c.ServeJSON()
 	} else {
-		this.Data["json"] = ReturnError(5000, "发送失败，请联系客服~")
-		this.ServeJSON()
+		c.Data["json"] = ReturnError(5000, "发送失败，请联系客服~")
+		c.ServeJSON()
 	}
 }

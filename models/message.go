@@ -1,6 +1,8 @@
 package models
 
 import (
+	"encoding/json"
+	"fyoukuapi/service/mq"
 	"github.com/astaxie/beego/orm"
 	"time"
 )
@@ -43,4 +45,18 @@ func SendMessageUser(userId int, messageId int64) error {
 	messageUser.AddTime = time.Now().Unix()
 	_, err := o.Insert(&messageUser)
 	return err
+}
+
+//保存消息接收人到队列中
+func SendMessageUserMq(userId int, messageId int64) {
+	//把数据转换成json字符串
+	type Data struct {
+		UserId    int
+		MessageId int64
+	}
+	var data Data
+	data.UserId = userId
+	data.MessageId = messageId
+	dataJson, _ := json.Marshal(data)
+	mq.Publish("", "fyouku_send_message_user", string(dataJson))
 }

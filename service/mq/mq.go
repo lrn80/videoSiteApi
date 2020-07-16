@@ -9,7 +9,7 @@ import (
 type  Callback func(msg string)
 
 func Connect() (*amqp.Connection, error)  {
-	conn, err := amqp.Dial("amqp://lrn:123456@47.106.252.126:5672")
+	conn, err := amqp.Dial("amqp://lrn:123456@47.106.252.126:5672/dev")
 	return conn, err
 }
 
