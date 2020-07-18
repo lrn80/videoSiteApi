@@ -41,6 +41,12 @@
 
 <img src="images/5.png" style="zoom:80%;" />
 
+- **弹幕功能**：弹幕功能我这里使用的websocket连接方式，节省了建立连接的资源。如下图：
+
+<img src="images/6.png" style="zoom:67%;" />
+
+客户端发送open与服务端建立通信，每分钟的定时请求服务端，发送当时的时间，客户端接受到时间获取一分钟之内的时间发送给服务端服务端获取一分钟之内的信息推送给客户端。
+
 #### 数据表关联关系
 
 <img src="images/fyouku.png" style="zoom:50%;" />
