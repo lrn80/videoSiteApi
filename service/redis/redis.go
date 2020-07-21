@@ -19,13 +19,12 @@ func PoolConnect() redis.Conn  {
 		Wait: true,
 		Dial: func() (redis.Conn, error) {
 			c, err := redis.Dial("tcp", beego.AppConfig.String(
-				"redisdb" + ":" + beego.AppConfig.String("redisport")))
+				"redisdb") + ":" + beego.AppConfig.String("redisport"))
 			if err != nil {
 				return nil, err
 			}
 			return c, nil
 		},
 	}
-
 	return pool.Get()
 }
